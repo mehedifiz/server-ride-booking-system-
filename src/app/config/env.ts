@@ -6,7 +6,7 @@ interface EnvConfig {
   PORT: string;
   DB_URL: string;
   NODE_ENV: "development" | "production";
-
+  BCRYPT_SALT_ROUND: string;
   JWT_ACCESS_SECRET: string;
 }
 
@@ -16,6 +16,7 @@ const loadEnvVariables = (): EnvConfig => {
     "DB_URL",
     "NODE_ENV",
     "JWT_ACCESS_SECRET",
+    "BCRYPT_SALT_ROUND",
   ];
 
   requiredEnvVariables.forEach((key) => {
@@ -30,6 +31,7 @@ const loadEnvVariables = (): EnvConfig => {
     DB_URL: process.env.DB_URL!,
     NODE_ENV: process.env.NODE_ENV as "development" | "production",
     JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET as string,
+    BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND as string,
   };
 };
 
