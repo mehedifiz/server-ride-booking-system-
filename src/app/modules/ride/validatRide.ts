@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Schema for location object
 const locationSchema = z.object({
   lat: z.number(),
   lng: z.number(),
