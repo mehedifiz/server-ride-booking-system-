@@ -21,7 +21,10 @@ export const auth =
       const token = req.headers.authorization;
 
       if (!token) {
-        throw new Error("You are not authorized!");
+        return res.status(401).json({
+          success: false,
+          message: "You are not authorized! Token missing.",
+        });
       }
 
       const decoded = jwt.verify(
@@ -34,25 +37,32 @@ export const auth =
       const user = await User.findById(userId);
 
       if (!user) {
-        throw new Error("This user is not found!");
+        return res.status(404).json({
+          success: false,
+          message: "This user is not found!",
+        });
       }
 
       if (user.isBlocked) {
-        throw new Error("User account is blocked");
+        return res.status(403).json({
+          success: false,
+          message: "Your account has been blocked.",
+        });
       }
 
       if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
-        throw new Error("You are not authorized for this action");
+        return res.status(403).json({
+          success: false,
+          message: "You are not authorized for this action.",
+        });
       }
-      console.log("role :", role);
 
       req.user = { _id: userId, role };
-
       next();
     } catch (err: any) {
-      const status = err.statusCode || 401;
-      res
-        .status(status)
-        .json({ success: false, message: err.message || "Unauthorized" });
+      res.status(401).json({
+        success: false,
+        message: err.message || "Unauthorized",
+      });
     }
   };

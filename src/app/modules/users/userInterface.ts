@@ -5,4 +5,5 @@ export interface IUser {
   role: "admin" | "rider" | "driver";
   isBlocked: boolean;
   createdAt: Date;
+  availability?: String;
 }

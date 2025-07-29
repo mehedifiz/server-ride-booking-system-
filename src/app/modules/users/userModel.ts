@@ -11,6 +11,12 @@ const userSchema = new Schema<IUser>({
     required: true,
   },
   isBlocked: { type: Boolean, default: false },
+  availability: {
+    type: String,
+    enum: ["Online", "Offline"],
+    required: true,
+    default: "Online",
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

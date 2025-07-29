@@ -3,6 +3,7 @@ import { Ride, RideStatus } from "./rideModel";
 import { sendResponse } from "../../utils/response";
 import { StatusCodes } from "http-status-codes";
 import { Types } from "mongoose";
+import { User } from "../users/userModel";
 
 export const requestRide = async (req: Request, res: Response) => {
   try {
