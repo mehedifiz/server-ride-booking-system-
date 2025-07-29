@@ -2,6 +2,7 @@ import { Router } from "express";
 import { auth } from "../../middlewares/auth";
 import {
   cancelRide,
+  driveEarningsHistory,
   getallRides,
   requestRide,
   updateRideStatus,
@@ -27,5 +28,7 @@ router.get("/all", auth(), getallRides);
 router.post("/updateStatus/:rideId", auth("driver"), updateRideStatus);
 
 router.patch("/cancelRide/:rideId", auth(), cancelRide);
+
+router.get("/earningsHistory", auth("driver"), driveEarningsHistory);
 
 export const RideRoute = router;

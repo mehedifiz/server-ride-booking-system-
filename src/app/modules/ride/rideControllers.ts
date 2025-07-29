@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Ride } from "./rideModel";
+import { Ride, RideStatus } from "./rideModel";
 import { sendResponse } from "../../utils/response";
 import { StatusCodes } from "http-status-codes";
 import { Types } from "mongoose";
@@ -57,13 +57,12 @@ export const getallRides = async (req: Request, res: Response) => {
     });
   }
 };
-
 export const updateRideStatus = async (req: Request, res: Response) => {
   try {
     const { rideId } = req.params;
-    const { status } = req.body;
+    const { status, payment } = req.body;
 
-    const validStatuses = [
+    const validStatuses: RideStatus[] = [
       "accepted",
       "picked_up",
       "in_transit",
@@ -86,9 +85,25 @@ export const updateRideStatus = async (req: Request, res: Response) => {
       });
     }
 
-    // Assign driver if ride is accepted
+    const allowedTransitions: Record<RideStatus, RideStatus[]> = {
+      requested: ["accepted", "cancelled"],
+      accepted: ["picked_up"],
+      picked_up: ["in_transit"],
+      in_transit: ["completed"],
+      completed: [],
+      cancelled: [],
+    };
+
+    const currentStatus = ride.status as RideStatus;
+    if (!allowedTransitions[currentStatus].includes(status)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: `Cannot change status from '${currentStatus}' to '${status}'`,
+      });
+    }
+
     if (status === "accepted" && req.user?._id) {
-      ride?.driver = new Types.ObjectId(req.user._id);
+      ride.driver = new Types.ObjectId(req.user._id);
       ride.acceptedAt = new Date();
     }
 
@@ -97,6 +112,11 @@ export const updateRideStatus = async (req: Request, res: Response) => {
     }
     if (status === "completed") {
       ride.completedAt = new Date();
+    }
+    // handcash
+    if (payment === true) {
+      ride.paymentStatus = "paid";
+      ride.paymentMethod = "cash";
     }
 
     ride.status = status;
@@ -154,5 +174,38 @@ export const cancelRide = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const driveEarningsHistory = async (req: Request, res: Response) => {
+  try {
+    const driverId = req.user?._id;
+
+    const rides = await Ride.find({
+      driver: driverId,
+      status: "completed",
+      paymentStatus: "paid",
+    })
+      .sort({ completedAt: -1 })
+      .select("price paymentMethod completedAt rider")
+      .populate("rider", "name email");
+
+    const totalEarnings = rides.reduce(
+      (sum, ride) => sum + (ride.price || 0),
+      0
+    );
+
+    res.status(200).json({
+      success: true,
+      count: rides.length,
+      totalEarnings,
+      rides,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
