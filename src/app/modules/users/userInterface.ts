@@ -6,4 +6,5 @@ export interface IUser {
   isBlocked: boolean;
   createdAt: Date;
   availability?: String;
+  isSuspend?: boolean;
 }

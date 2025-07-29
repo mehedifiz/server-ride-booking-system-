@@ -67,3 +67,77 @@ export const setAvailability = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const Allusers = async (req: Request, res: Response) => {
+  try {
+    const { filter } = req.query;
+    const data = await User.find(filter ? { role: filter } : {});
+
+    // Send response
+    res.json({
+      success: true,
+      count: data.length,
+      data,
+    });
+  } catch (err) {
+    res.json({
+      success: false,
+      message: "Error fetching data",
+      error: err.message || err,
+    });
+  }
+};
+
+export const setuspendStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { suspend } = req.body;
+
+    const driver = await User.findById(id);
+    if (!driver || driver.role !== "driver") {
+      return res
+        .status(404)
+        .json({ success: false, message: "Driver not found" });
+    }
+
+    driver.isSuspend = suspend;
+    await driver.save();
+
+    res.json({
+      success: true,
+      message: `Driver has been ${suspend ? "suspended" : "approved"}`,
+      driver,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error updating driver status", error });
+  }
+};
+
+export const userBlockStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { block } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    user.isBlocked = block;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `User has been ${block ? "blocked" : "unblocked"}`,
+      user,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error updating block status", error });
+  }
+};

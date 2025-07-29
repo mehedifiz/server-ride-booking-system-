@@ -17,6 +17,8 @@ const userSchema = new Schema<IUser>({
     required: true,
     default: "Online",
   },
+  isSuspend: { type: Boolean, default: false },
+
   createdAt: { type: Date, default: Date.now },
 });
 

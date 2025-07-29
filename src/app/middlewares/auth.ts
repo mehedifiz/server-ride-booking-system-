@@ -33,6 +33,7 @@ export const auth =
       ) as JwtPayload;
 
       const { userId, role } = decoded;
+      console.log("user", role);
 
       const user = await User.findById(userId);
 
