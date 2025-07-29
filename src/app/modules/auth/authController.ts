@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response) => {
       data: null as any,
     });
   }
-  const hashedPassword = await bcryptjs.hash(
+  const hashedPassword = await bcrypt.hash(
     password as string,
     Number(envVars.BCRYPT_SALT_ROUND)
   );

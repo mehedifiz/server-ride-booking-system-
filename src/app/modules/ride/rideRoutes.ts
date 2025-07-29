@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { auth } from "../../middlewares/auth";
-import { requestRide } from "./rideControllers";
+import {
+  cancelRide,
+  getallRides,
+  requestRide,
+  updateRideStatus,
+} from "./rideControllers";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { rideValidation } from "./validatRide";
 
@@ -17,5 +22,10 @@ router.post(
   ),
   requestRide
 );
+
+router.get("/all", auth(), getallRides);
+router.post("/updateStatus/:rideId", auth("driver"), updateRideStatus);
+
+router.patch("/cancelRide/:rideId", auth(), cancelRide);
 
 export const RideRoute = router;

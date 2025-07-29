@@ -44,6 +44,7 @@ export const auth =
       if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
         throw new Error("You are not authorized for this action");
       }
+      console.log("role :", role);
 
       req.user = { _id: userId, role };
 

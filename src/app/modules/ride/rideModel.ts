@@ -31,6 +31,11 @@ const rideSchema = new Schema({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
   },
+  price: {
+    type: Number,
+    required: true,
+    min: 10,
+  },
   requestedAt: { type: Date, default: Date.now },
   acceptedAt: Date,
   pickedUpAt: Date,
