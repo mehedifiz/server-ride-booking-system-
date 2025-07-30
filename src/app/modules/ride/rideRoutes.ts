@@ -4,6 +4,8 @@ import {
   cancelRide,
   driveEarningsHistory,
   getallRides,
+  getMyAcceptedRides,
+  getMyRides,
   requestRide,
   updateRideStatus,
 } from "./rideControllers";
@@ -25,10 +27,13 @@ router.post(
 );
 
 router.get("/all", auth(), getallRides);
-router.post("/updateStatus/:rideId", auth("driver"), updateRideStatus);
 
 router.patch("/cancelRide/:rideId", auth(), cancelRide);
 
+router.get("/myRides", auth("rider"), getMyRides);
+
+router.post("/updateStatus/:rideId", auth("driver"), updateRideStatus);
 router.get("/earningsHistory", auth("driver"), driveEarningsHistory);
+router.get("/my-accepted", auth("driver"), getMyAcceptedRides);
 
 export const RideRoute = router;

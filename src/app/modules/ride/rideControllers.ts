@@ -3,7 +3,6 @@ import { Ride, RideStatus } from "./rideModel";
 import { sendResponse } from "../../utils/response";
 import { StatusCodes } from "http-status-codes";
 import { Types } from "mongoose";
-import { User } from "../users/userModel";
 
 export const requestRide = async (req: Request, res: Response) => {
   try {
@@ -207,6 +206,50 @@ export const driveEarningsHistory = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Server error",
+    });
+  }
+};
+export const getMyRides = async (req: Request, res: Response) => {
+  try {
+    const rides = await Ride.find({
+      rider: req.user?._id,
+    }).sort({ requestedAt: -1 });
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Rider ride history fetched successfully",
+      data: rides,
+    });
+  } catch (error) {
+    sendResponse(res, {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: "Error fetching rider ride history",
+      data: error,
+    });
+  }
+};
+
+export const getMyAcceptedRides = async (req: Request, res: Response) => {
+  try {
+    const rides = await Ride.find({
+      driver: req.user?._id,
+      status: { $in: ["accepted", "completed"] },
+    }).sort({ acceptedAt: -1 });
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Driver ride history fetched successfully",
+      data: rides,
+    });
+  } catch (error) {
+    sendResponse(res, {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      success: false,
+      message: "Error fetching driver ride history",
+      data: error,
     });
   }
 };
