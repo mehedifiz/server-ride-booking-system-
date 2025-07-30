@@ -17,6 +17,6 @@ router.get("/allUsers", auth("admin"), Allusers);
 
 router.patch("/driver/:id/approval", auth("admin"), setuspendStatus);
 
-router.patch("/user/:id/block", auth("admin"), userBlockStatus);
+router.patch("/:id/block", auth("admin"), userBlockStatus);
 
 export const userRoute = router;
