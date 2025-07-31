@@ -1,5 +1,5 @@
-import { Schema, model, Types } from "mongoose";
-
+import { model, Schema } from "mongoose";
+import { IRide } from "./rideinterface";
 export type RideStatus =
   | "requested"
   | "accepted"
@@ -8,12 +8,9 @@ export type RideStatus =
   | "completed"
   | "cancelled";
 
-export type PaymentStatus = "paid" | "unpaid";
-export type PaymentMethod = "online" | "cash";
-
-const rideSchema = new Schema({
-  rider: { type: Types.ObjectId, ref: "User", required: true },
-  driver: { type: Types.ObjectId, ref: "User" },
+const rideSchema = new Schema<IRide>({
+  rider: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  driver: { type: Schema.Types.ObjectId, ref: "User" },
 
   status: {
     type: String,
@@ -38,11 +35,7 @@ const rideSchema = new Schema({
     lng: { type: Number, required: true },
   },
 
-  price: {
-    type: Number,
-    required: true,
-    min: 10,
-  },
+  price: { type: Number, required: true, min: 10 },
 
   paymentStatus: {
     type: String,
@@ -60,4 +53,4 @@ const rideSchema = new Schema({
   completedAt: Date,
 });
 
-export const Ride = model("Ride", rideSchema);
+export const Ride = model<IRide>("Ride", rideSchema);

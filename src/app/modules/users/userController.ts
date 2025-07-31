@@ -72,14 +72,14 @@ export const Allusers = async (req: Request, res: Response) => {
   try {
     const { filter } = req.query;
     const data = await User.find(filter ? { role: filter } : {});
-
+    console.log(data);
     // Send response
     res.json({
       success: true,
       count: data.length,
       data,
     });
-  } catch (err) {
+  } catch (err: any) {
     res.json({
       success: false,
       message: "Error fetching data",
