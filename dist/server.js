@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
-// import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
 const env_1 = require("./app/config/env");
+const makAdmin_1 = require("./app/config/makAdmin");
 let server;
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,7 +31,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield startServer();
-    //   await seedSuperAdmin();
+    yield (0, makAdmin_1.makAdmin)();
 }))();
 process.on("SIGTERM", () => {
     console.log("SIGTERM signal recieved... Server shutting down..");

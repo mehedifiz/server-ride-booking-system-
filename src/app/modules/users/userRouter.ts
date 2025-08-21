@@ -7,8 +7,10 @@ import {
   setuspendStatus,
   userBlockStatus,
 } from "./userController";
+import { Getme } from "../auth/authController";
 const router = Router();
 
+router.get("/me", auth(), Getme);
 router.get("/myRideHistory", auth(), myRideHistory);
 
 router.patch("/:id/availability", auth("admin", "driver"), setAvailability);

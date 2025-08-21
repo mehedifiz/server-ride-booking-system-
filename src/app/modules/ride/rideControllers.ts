@@ -38,21 +38,29 @@ export const requestRide = async (req: Request, res: Response) => {
 
 export const getallRides = async (req: Request, res: Response) => {
   try {
-    const status = req.user?.role === "admin" ? "" : "requested";
+    let rides;
 
-    const rides = await Ride.find({ status: status })
-      .populate("rider", "name email")
-      .sort({ requestedAt: -1 });
+    if (req.user?.role === "admin") {
+      // Admin sees all rides
+      rides = await Ride.find()
+        .populate("rider", "name email")
+        .sort({ requestedAt: -1 });
+    } else {
+      // Non-admin sees only requested rides
+      rides = await Ride.find({ status: "requested" })
+        .populate("rider", "name email")
+        .sort({ requestedAt: -1 });
+    }
 
     res.status(StatusCodes.OK).json({
       success: true,
-      message: "Requested rides fetched successfully",
+      message: "Rides fetched successfully",
       data: rides,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Failed to fetch requested rides",
+      message: "Failed to fetch rides",
       error,
     });
   }
